@@ -1,1 +1,1 @@
-# 每周总结可以写在这里
+[总结请在有道查看](http://note.youdao.com/noteshare?id=f1e11964f585ce92b78a12819e116a4c)
