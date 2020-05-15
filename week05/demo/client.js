@@ -37,16 +37,27 @@ class TrunkedBodyParser {
                 }
                 this.nextStatus('WAITING_LENGTH_LINE_END')
             } else {
-                this.length *= 10
-                this.length += char.charCodeAt(0) - '0'.charCodeAt(0)
+                this.length *= 16
+                this.length +=  parseInt(char, 16) // char.charCodeAt(0) - '0'.charCodeAt(0)
+                console.log('length:', this.length)
             }
         } else if (this.current === this.WAITING_LENGTH_LINE_END) {
             if (char === '\n') {
                 this.nextStatus('READING_TRUNK')
             }
         } else if (this.current === this.READING_TRUNK) {
+            let charCode = char.charCodeAt(0)
             this.content.push(char)
-            this.length--
+
+            if (charCode < Math.pow(2, 7)-1) {
+                this.length--
+            } else if (charCode < Math.pow(2, 11)-1) {
+                this.length = this.length - 2
+            } else if (charCode < Math.pow(2, 16)-1) {
+                this.length = this.length - 3
+            } else if (charCode < Math.pow(2, 21)-1) {
+                this.length = this.length - 4
+            }
             if (this.length === 0) {
                 this.nextStatus('WAITING_NEW_LINE')
             }
@@ -107,6 +118,7 @@ class ResponseParser {
     }
 
     receive(string) {
+        // console.log('+++++++++++++++++++++', JSON.stringify(string), '+++++++++++++++++++++')
         for (let i = 0; i < string.length; i++) {
             this.receiveChar(string.charAt(i))
         }
@@ -117,9 +129,6 @@ class ResponseParser {
         if (this.current === this.WAITING_STATUS_LINE) {
             if (char === '\r') {
                 this.nextStatus('WAITING_STATUS_LINE_END')
-            }
-            if (char === '\n') {
-                this.nextStatus('WAITING_HEADER_NAME')
             } else {
                 this.statusLine += char
             }
@@ -212,6 +221,7 @@ ${this.bodyText}`
                 })
             }
             connection.on('data', (data) => {
+                console.log(data.toString())
                 parse.receive(data.toString())
                 if (parse.isFinished) {
                     resolve(parse.response);
