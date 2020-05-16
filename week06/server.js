@@ -18,8 +18,8 @@ const server = http.createServer((req, res) => {
         </style>
     </head>
     <body>
-            <div>this is div</div>
-            <img />
+<div>this is div</div>
+<img />
     </body>
 </html>`)
 })

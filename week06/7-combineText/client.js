@@ -251,6 +251,7 @@ void async function() {
     })
     let data = await request.send()
     let dom = parser.parseHTML(data.body)
+    console.log(dom)
 }()
 
 
