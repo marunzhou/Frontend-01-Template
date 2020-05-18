@@ -12,7 +12,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\week06\\7-combineText\\client.js"
+            "program": "${workspaceFolder}\\week06\\8-computCss\\client.js"
         }
     ]
 }

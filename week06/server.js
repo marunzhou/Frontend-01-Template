@@ -15,10 +15,13 @@ const server = http.createServer((req, res) => {
             div {
                 width: 100px;
             }
+            #test {
+                color: red;
+            }
         </style>
     </head>
     <body>
-<div>this is div</div>
+<div id="test">this is div</div>
 <img />
     </body>
 </html>`)
