@@ -12,17 +12,28 @@ const server = http.createServer((req, res) => {
 <html meaa=a>
     <head>
         <style>
-            div {
-                width: 100px;
+            #container {
+                width: 500px;
+                height: 300px;
+                display: flex;
+                background-color: rgb(0,0,255);
             }
-            #test {
-                color: red;
+            #container #myid {
+                width: 200px;
+                height: 100px;
+                background-color: rgb(255,0,0);
+            }
+            #container .c1 {
+                flex: 1;
+                background-color: rgb(0,255,0);
             }
         </style>
     </head>
     <body>
-<div id="test">this is div</div>
-<img />
+<div id="container">
+    <div id="myid"></div>
+    <div class="c1"></div>
+</div>
     </body>
 </html>`)
 })
