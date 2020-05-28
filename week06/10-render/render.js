@@ -11,7 +11,7 @@ function render(viewport, element) {
             img.fill(Number(RegExp.$1), Number(RegExp.$2), Number(RegExp.$3), 1)
             // img.fill(255,0,0, 1)
             console.log("left:", element.style.left, element.style.right)
-            viewport.draw(img, element.style.left || 0, element.style.right || 0)
+            viewport.draw(img, element.style.left || 0, element.style.top || 0)
         }
     }
 
