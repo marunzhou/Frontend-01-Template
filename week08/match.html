@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <div id="id" class="class cls2">
+            div #id.class
+        </div>
+    </div>
+    <script>
+        function match(selector, element) {
+            if (!selector || !element.attributes ) return false
+            let selectors = []
+            let res = true
+            selector.split(' ').reverse().forEach(item => {
+                selectors.push(matchSelector(item))
+            });
+
+            for (let i = 0; i < selectors.length; i++) {
+                if (!res) break
+                let item = selectors[i]
+                for (let p in item) {
+                    if (item[p].length === 0) continue
+                    if (p === 'tagName' && !item[p].includes(element.tagName)) {
+                        res = false
+                        break
+                    } else if (!item[p].every(val => element.attributes.class.value.split(' ').includes(val))) {
+                        res = false
+                        break
+                    }
+                }
+            }
+
+            console.log(res)
+            return res;
+        }
+        
+
+        function matchSelector(selector) {
+            const regs = {
+                tagName: /^[\w]+/,
+                class: /\.([\w\d-])+/g,
+                id: /\#[\w\d-]+/g
+            }
+            const res = {
+                tagName: [],
+                class: [],
+                id: []
+            }
+
+            for (let p in regs) {
+                let match = selector.match(regs[p])
+                if (Array.isArray(match)) {
+                    match.forEach((item, index) => {
+                        match[index] = item.replace(/^[\.\#]/, '')
+                    })
+                    res[p] = match
+                }
+            }
+            console.log(res)
+
+            return res
+        }
+
+        match("div #id.class", document.getElementById("id"));
+    </script>
+</body>
+</html>
