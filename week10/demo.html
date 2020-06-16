@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #broad{
+            width: 300px;
+            height: 300px;
+            border: 1px solid #000;
+            font-size: 0;
+        }
+        .ceil{
+            display: inline-block;
+            border: 1px solid #fff;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            box-sizing: border-box;
+            background: green;
+            font-size: 50px;
+            text-align: center;
+            color: red;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="broad"></div>
+<script>
+    let panel = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    let color = 1
+    let flag = {
+        1: 'O',
+        2: 'X'
+    }
+    function show() {
+        let doms = ''
+        let broad = document.getElementById('broad')
+        broad.innerHTML = ''
+        for (let i = 0;i < 3; i ++) {
+            for (let j = 0; j < 3; j++) {
+                let dom = document.createElement('div')
+                dom.classList.add('ceil')
+                // console.log(panel)
+                dom.innerText = flag[panel[j][i]] || ''
+                dom.addEventListener('click', function() {
+                    draw(j, i)
+                }, false)
+                broad.appendChild(dom)
+            }
+        }
+    }
+    function draw(x, y) {
+        if (panel[x][y] !== 0) return
+        panel[x][y] = color
+        show()
+        if (isWiner(color)) {
+            return
+        }
+        color = 3 - color
+    }
+
+    function isWiner(color) {
+        let winter = true
+
+        for (let i = 0; i < 3; i++) {
+            winter = true
+            for (let j = 0; j < 3; j++) {
+                if (panel[i][j] !== color) {
+                    winter = false
+                }
+            }
+            if (winter) {
+                break
+            }
+        }
+        
+
+        for (let i = 0; i < 3; i++) {
+            winter = true
+            for (let j = 0; j < 3; j++) {
+                // console.log(color, i, j, panel[i][j])
+                if (panel[j][i] !== color) {
+                    winter = false
+                }
+            }
+            if (winter) {
+                break
+            }
+        }
+
+        return winter
+    }
+    show()
+</script>
+</body>
+</html>
