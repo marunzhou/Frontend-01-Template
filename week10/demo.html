@@ -30,7 +30,7 @@
 <body>
     <div id="broad"></div>
 <script>
-    let panel = [
+    let patten = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]
@@ -48,56 +48,103 @@
             for (let j = 0; j < 3; j++) {
                 let dom = document.createElement('div')
                 dom.classList.add('ceil')
-                // console.log(panel)
-                dom.innerText = flag[panel[j][i]] || ''
+                // console.log(patten)
+                dom.innerText = flag[patten[i][j]] || ''
                 dom.addEventListener('click', function() {
-                    draw(j, i)
+                    draw(i, j)
                 }, false)
                 broad.appendChild(dom)
             }
         }
     }
     function draw(x, y) {
-        if (panel[x][y] !== 0) return
-        panel[x][y] = color
+        if (patten[x][y] !== 0) return
+        patten[x][y] = color
         show()
-        if (isWiner(color)) {
+        if (isWiner(patten, color)) {
+            alert('you are win')
             return
         }
         color = 3 - color
+        console.log(willWin(clone(patten), color))
+
     }
 
-    function isWiner(color) {
-        let winter = true
+    function isWiner(patten, color) {
+        let isWin = true
 
         for (let i = 0; i < 3; i++) {
-            winter = true
+            isWin = true
             for (let j = 0; j < 3; j++) {
-                if (panel[i][j] !== color) {
-                    winter = false
+                if (patten[i][j] !== color) {
+                    isWin = false
                 }
             }
-            if (winter) {
+            if (isWin) {
+                return isWin
+            }
+
+            isWin = true
+            for (let j = 0; j < 3; j++) {
+                // console.log(color, i, j, patten[i][j])
+                if (patten[j][i] !== color) {
+                    isWin = false
+                }
+            }
+            if (isWin) {
+                return isWin
+            }
+        }
+        isWin = true
+        for (let j = 0; j < 3; j++) {
+            if (patten[j][j] !== color) {
+                isWin = false
                 break
             }
+        }
+        if (isWin) {
+            return isWin
         }
         
-
-        for (let i = 0; i < 3; i++) {
-            winter = true
-            for (let j = 0; j < 3; j++) {
-                // console.log(color, i, j, panel[i][j])
-                if (panel[j][i] !== color) {
-                    winter = false
-                }
-            }
-            if (winter) {
+        isWin = true
+        for (let j = 0; j < 3; j++) {
+            if (patten[j][2 - j] !== color) {
+                isWin = false
                 break
             }
         }
 
-        return winter
+        return isWin
     }
+    function clone (patten) {
+        return JSON.parse(JSON.stringify(patten))
+    }
+    // -1:输; 0:平; 1:胜;
+    // 算出下一步会赢的棋
+    function willWin(patten, color) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (patten[i][j] !== 0) continue
+                let clonePatten = clone(patten)
+                clonePatten[i][j] = color
+                if (isWiner(clonePatten, color)) {
+                    return {
+                        option: [i, j],
+                        result: 1
+                    }
+                }
+            }
+        }
+
+        return null
+    }
+
+    // 写一个棋手
+    // 有一个决对的结局-必和
+    function chonice(patten, color) {
+
+    }
+
     show()
 </script>
 </body>
