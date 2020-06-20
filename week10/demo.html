@@ -51,23 +51,29 @@
                 // console.log(patten)
                 dom.innerText = flag[patten[i][j]] || ''
                 dom.addEventListener('click', function() {
-                    draw(i, j)
+                    userMove(j, i)
                 }, false)
                 broad.appendChild(dom)
             }
         }
     }
-    function draw(x, y) {
-        if (patten[x][y] !== 0) return
-        patten[x][y] = color
+    function userMove(x, y) {
+        console.log(x, y)
+        // if (patten[y][x] !== 0) return
+        patten[y][x] = color
         show()
-        if (isWiner(patten, color)) {
-            alert('you are win')
-            return
-        }
         color = 3 - color
-        console.log(willWin(clone(patten), color))
 
+        computeMove()
+    }
+
+    function computeMove() {
+        let res = bestChonice(patten, color)
+        console.log(res)
+        if (res.point)
+            patten[res.point[1]][res.point[0]] = color
+        show()
+        color = 3 - color
     }
 
     function isWiner(patten, color) {
@@ -128,10 +134,7 @@
                 let clonePatten = clone(patten)
                 clonePatten[i][j] = color
                 if (isWiner(clonePatten, color)) {
-                    return {
-                        option: [i, j],
-                        result: 1
-                    }
+                    return [j, i]
                 }
             }
         }
@@ -139,10 +142,59 @@
         return null
     }
 
-    // 写一个棋手
-    // 有一个决对的结局-必和
-    function chonice(patten, color) {
+    let opentings = new Map()
+    opentings.set(JSON.stringify([
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]), [1, 1])
 
+    opentings.set(JSON.stringify([
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 0, 0],
+    ]), [0, 0])
+
+    // 最好的下法
+    // 1、下一步我方胜
+    // 2、不让对方胜
+    function bestChonice(patten, color) {
+        if (opentings.get(JSON.stringify(patten))) {
+            return {
+                point: opentings.get(JSON.stringify(patten)),
+                result: 1
+            }
+        }
+        let point = willWin(patten, color)
+        if (point) {
+            return {
+                point,
+                result: 1
+            }
+        }
+        let result = -1
+        // 对方要胜的步子
+        outer: for (let i = 0;i < 3;i++) {
+            for (let j = 0;j < 3;j++) {
+                let tmp = clone(patten)
+                if (tmp[i][j] !== 0) continue
+                tmp[i][j] = color
+                let opp = bestChonice(tmp, 3 - color)
+
+                if (-opp.result >= result) {
+                    point = [j, i]
+                    result = - opp.result
+                }
+                if (result == 1) {
+                    break outer
+                }
+            }
+        }
+
+        return {
+            point: point,
+            result: point ? result : 0
+        }
     }
 
     show()
