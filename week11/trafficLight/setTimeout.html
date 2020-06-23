@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: darkgray;
+        }
+        #red.light {
+            background-color: red;
+        }
+        #yellow.light {
+            background-color: yellow;
+        }
+        #green.light {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="red"></div>
+    <div id="yellow"></div>
+    <div id="green"></div>
+
+    <script>
+        function removeClass() {
+            let divs = document.getElementsByTagName('div')
+            Array.from(divs).forEach(item => {
+                item.classList.remove('light')
+            })
+        }
+        function red() {
+            removeClass()
+            document.getElementById('red').classList.add('light')
+            setTimeout(yellow, 3000)
+        }
+        function yellow() {
+            removeClass()
+            document.getElementById('yellow').classList.add('light')
+            setTimeout(green, 2000)
+        }
+        function green() {
+            removeClass()
+            document.getElementById('green').classList.add('light')
+            setTimeout(red, 2000)
+        }
+        function run() {
+            red()
+        }
+    </script>
+</body>
+</html>

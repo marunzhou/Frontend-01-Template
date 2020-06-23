@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: darkgray;
+        }
+        #red.light {
+            background-color: red;
+        }
+        #yellow.light {
+            background-color: yellow;
+        }
+        #green.light {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="red"></div>
+    <div id="yellow"></div>
+    <div id="green"></div>
+
+    <script>
+        function removeClass() {
+            let divs = document.getElementsByTagName('div')
+            Array.from(divs).forEach(item => {
+                item.classList.remove('light')
+            })
+        }
+        
+        function sleep(interval) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve()
+                }, interval)
+            })
+        }
+        function red() {
+            removeClass()
+            document.getElementById('red').classList.add('light')
+        }
+        function yellow() {
+            removeClass()
+            document.getElementById('yellow').classList.add('light')
+        }
+        function green() {
+            removeClass()
+            document.getElementById('green').classList.add('light')
+        }
+        
+        function* run () {
+            while(true) {
+                red()
+                yield sleep(3000)
+                yellow()
+                yield sleep(2000)
+                green()
+                yield sleep(1000)
+            }
+        }
+        
+        function co(iterator) {
+            var { done, value } = iterator.next()
+            console.log(done, value)
+            if (done) {
+                return
+            }
+            if (value instanceof Promise) {
+                value.then(() => co(iterator))
+            }
+        }
+
+    </script>
+</body>
+</html>
