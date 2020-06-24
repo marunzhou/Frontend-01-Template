@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #app{
+            font-size: 0;
+            width: 500px;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .ceil{
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-left: 0;
+            border-bottom: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <button onclick="localStorage.patten = JSON.stringify(patten)">save</button>
+    <script>
+        
+        let patten = localStorage.patten ? JSON.parse(localStorage.patten) : new Array(10000).fill(0)
+        let app = document.getElementById('app')
+        let mouse = false
+        let clear = false
+
+        for (let i = 0; i < 100; i++) {
+            for (let j = 0; j < 100; j++) {
+                let span = document.createElement('span')
+                span.classList.add('ceil')
+                if (patten[i * 100 + j]) {
+                    span.style.backgroundColor = 'black'
+                }
+                app.appendChild(span)
+                span.addEventListener('mousemove', function(e) {
+                    if (mouse) {
+                        if (clear) {
+                            e.target.style.backgroundColor = ''
+                            patten[i * 100 + j] = 0
+                        } else {
+                            e.target.style.backgroundColor = 'black'
+                            patten[i * 100 + j] = 1
+                        }
+                    }
+                })
+            }
+        }
+        document.addEventListener('mousedown', (e) => {
+            mouse = true
+            clear = e.which === 3
+        })
+        document.addEventListener('mouseup', () => mouse = false)
+        // 禁用右键菜单
+        document.addEventListener('contextmenu', e => e.preventDefault())
+    </script>
+</body>
+</html>
