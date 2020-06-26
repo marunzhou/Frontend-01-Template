@@ -336,6 +336,6 @@ function layout (element) {
         crossBase += crossSign * (lineCrossSize + step)
     })
 
-    console.log(element)
+    // console.log(element)
 }
 module.exports = layout

@@ -221,7 +221,7 @@ ${this.bodyText}`
                 })
             }
             connection.on('data', (data) => {
-                console.log(data.toString())
+                // console.log(data.toString())
                 parse.receive(data.toString())
                 if (parse.isFinished) {
                     resolve(parse.response);
