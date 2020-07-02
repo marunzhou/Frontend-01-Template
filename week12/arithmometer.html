@@ -1,0 +1,142 @@
+<!--
+ * @Description: 
+ * @Author: 马润洲
+ * @Date: 2020-07-01 11:32:22
+ * @LastEditTime: 2020-07-02 09:14:43
+ * @LastEditors: 马润洲
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四则运算器</title>
+</head>
+<body>
+    <script>
+        const reg = /([0-9\.]+)|([ ]+)|([\r\n]+)|(\+)|(\-)|(\*)|(\/)/g
+        const dictionary = ['Number', 'Whitespace', 'LineTerminator', '+', '-', '*', '/']
+
+        function* tokenise(source) {
+
+            let lastIndex = 0
+            let result = null
+
+            while(true) {
+                lastIndex = reg.lastIndex
+                result = reg.exec(source)
+                if (!result) 
+                    break
+                
+                let token = {
+                    type: null,
+                    value: null
+                }
+
+                for (let i = 0; i < dictionary.length; i++) {
+                    if (result[i + 1]) {
+                        token.type = dictionary[i]
+                    }
+                }
+
+                token.value = result[0]
+
+                
+
+                yield token
+            }
+
+            yield { type: "EOF" }
+        }
+        let source = []
+        for (let token of tokenise("1024 * 26 + 10")) {
+            if (token.type !== 'Whitespace' && token.type !== 'LineTerminator') {
+                source.push(token)
+            }
+        }
+        console.log(Expression(source))
+        
+        function Expression(source) {
+            if (source[0].type === 'AdditiveExpression' && source[1].type === 'EOF') {
+                let node = {
+                    type: 'Expression',
+                    value: [source.shift(), source.shift()]
+                }
+                source.unshift(node)
+
+                return node
+            }
+            AdditiveExpression(source)
+            
+            return Expression(source)
+        }
+        function AdditiveExpression(source) {
+            if (source[0].type === 'Number') {
+                MultiplicativeExpression(source)
+
+                return AdditiveExpression(source)
+            }
+
+            if (source[0].type === 'MultiplicativeExpression') {
+                let node = {
+                    type: 'AdditiveExpression',
+                    children: [source.shift()]
+                }
+                source.unshift(node)
+
+                return AdditiveExpression(source)
+            }
+
+            if (source[0].type === 'AdditiveExpression' && 
+                source.length > 0 && 
+                (source[1].type === '+' || source[1].type === '-')
+            ) {
+                let node = {
+                    type: 'AdditiveExpression',
+                    children: [source.shift(), source.shift()] // 此处不确定第三位数是否是number固只shift前两位数
+                }
+                
+                MultiplicativeExpression(source)
+                node.children.push(source.shift())
+                source.unshift(node)
+                
+                return AdditiveExpression(source)
+            }
+
+            if (source[0].type === 'AdditiveExpression') {
+                return source[0]
+            }
+        }
+        function MultiplicativeExpression(source) {
+            if (source[0].type === 'Number') {
+                let node = {
+                    type: 'MultiplicativeExpression',
+                    children: source.shift()
+                }
+
+                source.unshift(node)
+                
+                return MultiplicativeExpression(source)
+            }
+
+            if (source[0].type === 'MultiplicativeExpression' && source.length > 1 &&
+                (source[1].type === '*' || source[1].type === '/')
+            ) {
+                let node = {
+                    type: 'MultiplicativeExpression',
+                    children: [source.shift(), source.shift(), source.shift()]
+                }
+                source.unshift(node)
+
+                return MultiplicativeExpression(source)
+            }
+
+            if (source[0].type === 'MultiplicativeExpression') {
+                return source[0]
+            }
+
+            throw new Error('unknow type!')
+        }
+    </script>
+</body>
+</html>
