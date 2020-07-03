@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class Trie {
+            constructor() {
+                this.root = Object.create(null)
+            }
+
+            insert(str) {
+                let temp = this.root
+                for (let s of str) {
+                    if (!temp[s]) {
+                        temp[s] = Object.create(null)
+                    }
+
+                    temp = temp[s]
+                }
+
+                if (!('$' in temp)) {
+                    temp['$'] = 0
+                }
+
+                temp['$']++
+            }
+
+            getMax() {
+                let max = 0
+                let maxWord = ''
+                let visited = (node, word) => {
+                    if (node && node['$'] > max) {
+                        max = node['$']
+                        maxWord = word
+                    }
+                    for (let p in node) {
+                        visited(node[p], word + p)
+                    }
+                }
+
+                visited(this.root, '')
+                console.log(max, maxWord)
+            }
+        }
+
+        function getRomdonStr(len) {
+            let str = ''
+            for (let i = 0; i < len; i++) {
+                str += String.fromCharCode(parseInt(Math.random() * 26 + "a".charCodeAt(0), 10))
+            }
+
+            return str
+        }
+        let trie = new Trie
+        for (let i = 0; i < 10000; i++) {
+            // console.log(getRomdonStr(4))
+            trie.insert(getRomdonStr(4))
+        }
+        // trie.insert('abcd')
+        // trie.insert('abcd')
+        console.log(trie.root)
+    </script>
+</body>
+</html>
