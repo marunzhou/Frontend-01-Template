@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box{
+            width: 100px;
+            height: 100px;
+            background-color: cornsilk;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+        文字 文字 文字 文字 文字 文字 
+    </div>
+    <div id="box"></div>
+
+
+    <script>
+        const box = document.getElementById('box')
+        let baseX = 0, baseY = 0
+
+        box.addEventListener('mousedown', (event) => {
+            console.log('mousedown')
+            let startX = event.clientX, startY = event.clientY
+            let move = (event) => {
+                let range = nearest(event.clientX, event.clientY)
+                range.insertNode(box)
+                // let x = baseX + event.clientX - startX
+                // let y = baseY + event.clientY - startY
+                // box.style = `transform: translate(${x}px, ${y}px)`
+            }
+            let up = (event) => {
+                baseX = baseX + event.clientX - startX, baseY = baseY + event.clientY - startY
+                box.removeEventListener('mousemove', move)
+                box.removeEventListener('mouseup', up)
+            }
+
+            box.addEventListener('mousemove', move)
+            box.addEventListener('mouseup', up)
+        })
+
+        let ranges = []
+        const container = document.getElementById('container')
+        for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+            let range = document.createRange()
+            range.setStart(container.childNodes[0], i)
+            range.setEnd(container.childNodes[0], i)
+            ranges.push(range)
+        }
+        // 这个根据什么来进行计算
+        function nearest(x0, y0) {
+            let nearestRange = null
+            let distance = Infinity
+
+            for (let range of ranges) {
+                let {x, y} = range.getBoundingClientRect()
+                let d = (x0 - x) ** 2 + (y0 - y) ** 2
+
+                if (d < distance) {
+                    nearestRange = range
+                    distance = d
+                }
+            }
+
+            return nearestRange
+        }
+
+        document.addEventListener("selectstart", (e) => e.preventDefault())
+    </script>
+</body>
+</html>

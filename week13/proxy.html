@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box{
+            width: 200px;
+            height: 200px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="h1">this is {{ val }}!</h1>
+    <label for="">R:<input type="range" value="" min="0" max="255" class="rangeInput" prop="r" /></label>
+    <label for="">G:<input type="range" value="" min="0" max="255" class="rangeInput" prop="g" /></label>
+    <label for="">B:<input type="range" value="" min="0" max="255" class="rangeInput" prop="b" /></label>
+    <div id="box"></div>
+    <script>
+        let handles = new Map()
+        let reactivities = new Map()
+        let usedReactivites = []
+
+        let object = {
+            a: 1,
+            b: 2
+        }
+
+        function reactive(obj) {
+            if (reactivities.has(obj)) {
+                return reactivities.get(obj)
+            }
+            let proxy = new Proxy(obj, {
+                get(obj, prop) {
+                    usedReactivites.push([obj, prop])
+                    if (typeof obj[prop] === 'object') {
+                        reactive(obj[porp])
+                    }
+
+                    return obj[prop]
+                },
+                set(obj, prop, val) {
+                    obj[prop] = val
+                    if (handles.has(obj) && handles.get(obj).has(prop)) {
+                        for (let handle of handles.get(obj).get(prop)) {
+                            handle()
+                        }
+                    }
+
+                    return val
+                }
+            })
+
+            reactivities.set(obj, proxy)
+
+            return proxy
+        }
+
+        function effect(handle) {
+            usedReactivites = []
+            handle()
+
+            for (let usedReactivity of usedReactivites) {
+                let [ obj, prop ] = usedReactivity
+                if (!handles.has(obj)) {
+                    handles.set(obj, new Map())
+                }
+                if (!handles.get(obj).has(prop)) {
+                    handles.get(obj).set(prop, [])
+                }
+
+                handles.get(obj).get(prop).push(handle)
+            }
+        }
+        let dumny
+        let o = reactive(object)
+        let o2 = reactive(object)
+        let rangeObj = reactive({ r: 0, g: 0, b: 0 })
+        // effect 是基本get进行收集，那effect执行get是否有意义
+        // effect(() => { document.getElementById('input').value = o.a })
+        effect(() => {
+            let { r, g, b } = rangeObj
+            document.getElementById('box').style = `background: rgba(${r}, ${g}, ${b}, 1)`
+        })
+        for (let dom of document.querySelectorAll('.rangeInput')) {
+            let prop = dom.getAttribute('prop')
+            dom.addEventListener('input', (event) => {
+                rangeObj[prop] = event.target.value
+            }, false)
+        }
+    </script>
+</body>
+
+</html>

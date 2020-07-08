@@ -1,0 +1,46 @@
+<!--
+ * @Description: 
+ * @Author: 马润洲
+ * @Date: 2020-07-07 14:31:10
+ * @LastEditTime: 2020-07-08 09:52:48
+ * @LastEditors: 马润洲
+--> 
+<script>
+    // ababcabxax abcabx
+    function find(source, pattern) {
+        let table = new Array(pattern.length).fill(0)
+        let j = 0;
+        for (let i = 1; i < pattern.length; i++) {
+            if (pattern[i] === pattern[j]) {
+                j++
+            } else {
+                j = 0
+            }
+            table[i] = j
+        }
+        
+        let k = 0
+        for (let i = 0; i < source.length; i++) {
+            if (source[i] == pattern[k]) {
+                k++
+            } else {
+                while(source[i] !== pattern[k] && k > 0) {
+                    k = table[k - 1]
+                }
+
+                if (source[i] == pattern[k]) {
+                    k++
+                } else {
+                    k = 0
+                }
+            }
+
+            if (k === pattern.length) {
+                return true
+            }
+        }
+
+        return false
+    }
+    console.log(find('abcabcabxax', 'abcabx'))
+</script>
